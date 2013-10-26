@@ -4,19 +4,23 @@ import com.sucy.skill.SkillAPI;
 import com.sucy.skill.api.ClassAttribute;
 import com.sucy.skill.api.CustomClass;
 import com.sucy.skill.config.ClassValues;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 import org.bukkit.ChatColor;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
 
-import java.util.*;
+
 
 /**
  * <p>Class data for classes</p>
  */
 public final class SkillTree implements InventoryHolder {
 
-    Hashtable<Integer, Skill> skillSlots = new Hashtable<Integer, Skill>();
+    HashMap<Integer, Skill> skillSlots = new HashMap();
     ChatColor braceColor;
     SkillAPI plugin;
     String parent;
@@ -58,7 +62,7 @@ public final class SkillTree implements InventoryHolder {
         if (config.contains(ClassValues.MANA_BONUS))
              c.setScale(ClassAttribute.MANA, config.getInt(ClassValues.MANA_BONUS));
 
-        ArrayList<Skill> skills = new ArrayList<Skill>();
+        ArrayList<Skill> skills = new ArrayList();
 
         // Inheritance
         for (String tree : config.getStringList(ClassValues.INHERIT)) {

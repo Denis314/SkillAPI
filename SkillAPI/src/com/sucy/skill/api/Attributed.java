@@ -6,8 +6,8 @@ import java.util.List;
 
 public abstract class Attributed {
 
-    private final HashMap<String, Integer> base = new HashMap<String, Integer>();
-    private final HashMap<String, Integer> scale = new HashMap<String, Integer>();
+    private final HashMap<String, Integer> base = new HashMap();
+    private final HashMap<String, Integer> scale = new HashMap();
 
     /**
      * <p>Defines a new attribute for the skill</p>
@@ -93,6 +93,7 @@ public abstract class Attributed {
      * @param attribute attribute to add to
      * @param amount    amount to add
      */
+    @Deprecated
     public void addAttribute(String attribute, int amount) {
         setBase(attribute, getBase(attribute) + amount);
     }
@@ -107,7 +108,7 @@ public abstract class Attributed {
      * @return custom attribute names
      */
     public List<String> getAttributeNames() {
-        return new ArrayList<String>(base.keySet());
+        return new ArrayList(base.keySet());
     }
 
     /**
@@ -141,6 +142,7 @@ public abstract class Attributed {
      * @param defaultBase  default base value
      * @param defaultScale default scale value
      */
+    @Deprecated
     public void checkDefault(String attribute, int defaultBase, int defaultScale) {
         if (!hasAttribute(attribute))
             setAttribute(attribute, defaultBase, defaultScale);

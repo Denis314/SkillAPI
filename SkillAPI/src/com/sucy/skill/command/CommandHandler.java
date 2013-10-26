@@ -25,7 +25,7 @@ public abstract class CommandHandler implements CommandExecutor {
     /**
      * Table of registered sub-commands
      */
-    protected final Map<String, ICommand> commands = new HashMap<String, ICommand>();
+    protected final Map<String, ICommand> commands = new HashMap();
 
     /**
      * Plugin reference
@@ -54,7 +54,6 @@ public abstract class CommandHandler implements CommandExecutor {
         this.title = title;
         this.label = command;
         registerCommands();
-
         PluginCommand cmd = ((JavaPlugin)plugin).getCommand(command);
         if (cmd != null) {
             cmd.setExecutor(this);
@@ -104,6 +103,7 @@ public abstract class CommandHandler implements CommandExecutor {
      * @param args   command arguments
      * @return       true
      */
+    @Override
     public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
 
         // No arguments simply shows the command usage
@@ -178,7 +178,7 @@ public abstract class CommandHandler implements CommandExecutor {
         if (page < 1) page = 1;
 
         // Get the key set alphabetized
-        ArrayList<String> keys = new ArrayList<String>(commands.keySet());
+        ArrayList<String> keys = new ArrayList(commands.keySet());
         Collections.sort(keys);
 
         // Limit the page number

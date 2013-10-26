@@ -30,6 +30,7 @@ public class ManaTask extends BukkitRunnable {
     /**
      * Gives mana to all players
      */
+    @Override
     public void run() {
         for (Player player : plugin.getServer().getOnlinePlayers()) {
             if (plugin.getPlayer(player.getName()) != null) {

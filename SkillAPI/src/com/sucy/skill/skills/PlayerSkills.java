@@ -5,8 +5,6 @@ import com.sucy.skill.api.skill.*;
 import com.sucy.skill.api.util.Protection;
 import com.sucy.skill.api.util.TargetHelper;
 import com.sucy.skill.language.StatusNodes;
-import com.sucy.skill.mccore.CoreChecker;
-import com.sucy.skill.mccore.PrefixManager;
 import com.sucy.skill.SkillAPI;
 import com.sucy.skill.api.ClassAttribute;
 import com.sucy.skill.api.CustomClass;
@@ -30,10 +28,10 @@ import java.util.*;
  */
 public final class PlayerSkills {
 
-    private HashMap<String, Integer> values = new HashMap<String, Integer>();
-    private HashMap<String, Integer> skills = new HashMap<String, Integer>();
-    private HashMap<Material, String> binds = new HashMap<Material, String>();
-    private HashMap<Status, Long> statuses = new HashMap<Status, Long>();
+    private HashMap<String, Integer> values = new HashMap();
+    private HashMap<String, Integer> skills = new HashMap();
+    private HashMap<Material, String> binds = new HashMap();
+    private HashMap<Status, Long> statuses = new HashMap();
     private SkillAPI plugin;
     private String player;
     private String tree;
@@ -79,13 +77,9 @@ public final class PlayerSkills {
                 setClass(null);
                 return;
             }
-
-            if (plugin.getServer().getPlayer(player) != null && CoreChecker.isCoreActive()) {
-                PrefixManager.setPrefix(this, tree.prefix, tree.braceColor);
-            }
             if (skillConfig != null) {
                 for (String skill : skillConfig.getKeys(false)) {
-                    if (tree.skillSlots.contains(plugin.getSkill(skill)))
+                    if (tree.skillSlots.containsValue(plugin.getSkill(skill)))
                         skills.put(skill, skillConfig.getInt(skill));
                 }
             }
@@ -272,8 +266,6 @@ public final class PlayerSkills {
             stopPassiveAbilities();
             skills.clear();
             binds.clear();
-            if (CoreChecker.isCoreActive())
-                PrefixManager.clearPrefix(player);
             updateHealth();
 
             plugin.getServer().getPluginManager().callEvent(
@@ -286,10 +278,10 @@ public final class PlayerSkills {
         // If not resetting, simply remove any skills no longer in the tree
         if (!plugin.doProfessionsReset()) {
             for (String skill : skills.keySet()) {
-                if (tree.skillSlots.contains(skill.toLowerCase()))
+                if (tree.skillSlots.containsValue(plugin.getSkill(skill)))
                     continue;
                 skills.remove(skill);
-                ArrayList<Material> keys = new ArrayList<Material>();
+                ArrayList<Material> keys = new ArrayList();
                 for (Map.Entry<Material, String> entry : binds.entrySet())
                     if (entry.getValue().equalsIgnoreCase(skill))
                         keys.add(entry.getKey());
@@ -307,10 +299,6 @@ public final class PlayerSkills {
         if (prevTree == null) {
             mana = plugin.getRegisteredClass(this.tree).getAttribute(ClassAttribute.MANA, level);
         }
-
-        // Set the new prefix for the class
-        if (CoreChecker.isCoreActive())
-            PrefixManager.setPrefix(this, tree.prefix, tree.braceColor);
 
         updateHealth();
         plugin.getServer().getPluginManager().callEvent(

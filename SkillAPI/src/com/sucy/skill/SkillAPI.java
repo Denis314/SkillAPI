@@ -8,8 +8,6 @@ import com.sucy.skill.api.skill.TargetSkill;
 import com.sucy.skill.command.ClassCommander;
 import com.sucy.skill.api.util.TextSizer;
 import com.sucy.skill.config.*;
-import com.sucy.skill.mccore.CoreChecker;
-import com.sucy.skill.mccore.PrefixManager;
 import com.sucy.skill.skills.*;
 import com.sucy.skill.skills.SkillTree;
 import com.sucy.skill.task.InventoryTask;
@@ -23,7 +21,7 @@ import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.ArrayList;
-import java.util.Hashtable;
+import java.util.HashMap;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -35,12 +33,12 @@ import java.util.regex.Pattern;
  */
 public class SkillAPI extends JavaPlugin {
 
-    private Hashtable<String, Skill> skills = new Hashtable<String, Skill>();
-    private Hashtable<String, SkillTree> trees = new Hashtable<String, SkillTree>();
-    private Hashtable<String, PlayerSkills> players = new Hashtable<String, PlayerSkills>();
-    private Hashtable<String, Integer> exp = new Hashtable<String, Integer>();
-    private Hashtable<String, ClassSkill> registeredSkills = new Hashtable<String, ClassSkill>();
-    private Hashtable<String, CustomClass> registeredClasses = new Hashtable<String, CustomClass>();
+    private HashMap<String, Skill> skills = new HashMap();
+    private HashMap<String, SkillTree> trees = new HashMap();
+    private HashMap<String, PlayerSkills> players = new HashMap();
+    private HashMap<String, Integer> exp = new HashMap();
+    private HashMap<String, ClassSkill> registeredSkills = new HashMap();
+    private HashMap<String, CustomClass> registeredClasses = new HashMap();
     private RegisterMode mode = RegisterMode.DONE;
     private InventoryTask invTask;
     private ManaTask manaTask;
@@ -195,10 +193,6 @@ public class SkillAPI extends JavaPlugin {
             player.applyMaxHealth(20);
         }
 
-        // Clear scoreboards
-        if (CoreChecker.isCoreActive())
-            PrefixManager.clearAll();
-
         // Clear all data
         skills.clear();
         trees.clear();
@@ -315,7 +309,7 @@ public class SkillAPI extends JavaPlugin {
         // Detect if default values are needed
         Config configFile = new Config(this, "skill\\" + skill.getName());
         ConfigurationSection config = configFile.getConfig();
-        boolean neededOnly = config.getKeys(false).size() != 0;
+        boolean neededOnly = !config.getKeys(false).isEmpty();
 
         // Save default values
         try {
@@ -397,7 +391,7 @@ public class SkillAPI extends JavaPlugin {
         // Detect if default values are needed
         Config configFile = new Config(this, "class\\" + customClass.getName());
         ConfigurationSection config = configFile.getConfig();
-        boolean neededOnly = config.getKeys(false).size() != 0;
+        boolean neededOnly = !config.getKeys(false).isEmpty();
 
         // Save values to config
         try {
@@ -504,7 +498,7 @@ public class SkillAPI extends JavaPlugin {
      * @return     all child skills
      */
     public ArrayList<Skill> getChildSkills(String name) {
-        ArrayList<Skill> skills = new ArrayList<Skill>();
+        ArrayList<Skill> skills = new ArrayList();
         for (Skill skill : skills) {
             if (skill.getSkillReq() != null && skill.getSkillReq().equalsIgnoreCase(name))
                 skills.add(skill);
@@ -561,7 +555,7 @@ public class SkillAPI extends JavaPlugin {
      * @return     name of all children
      */
     public ArrayList<String> getChildren(String tree) {
-        ArrayList<String> children = new ArrayList<String>();
+        ArrayList<String> children = new ArrayList();
         for (SkillTree t : trees.values()) {
             if (tree == null) {
                 if (t.getParent() == null) children.add(t.getName());
@@ -585,7 +579,7 @@ public class SkillAPI extends JavaPlugin {
      * @return       list of available child skill trees
      */
     public ArrayList<String> getChildren(String tree, Player player) {
-        ArrayList<String> children = new ArrayList<String>();
+        ArrayList<String> children = new ArrayList();
         for (SkillTree t : trees.values()) {
             if (tree == null) {
                 if (t.getParent() == null && hasPermission(player, t)) children.add(t.getName());
@@ -651,7 +645,7 @@ public class SkillAPI extends JavaPlugin {
         if (!applyFilters) return languageConfig.getConfig().getStringList(path);
 
         List<String> original = languageConfig.getConfig().getStringList(path);
-        List<String> filtered = new ArrayList<String>();
+        List<String> filtered = new ArrayList();
 
         // Filter each string
         for (String string : original) {

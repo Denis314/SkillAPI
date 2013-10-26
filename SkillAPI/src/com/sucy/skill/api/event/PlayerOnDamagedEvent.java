@@ -1,11 +1,10 @@
 package com.sucy.skill.api.event;
 
+import java.util.HashMap;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
-
-import java.util.Hashtable;
 
 /**
  * Event for when a player takes damage from an enemy
@@ -13,7 +12,7 @@ import java.util.Hashtable;
 public class PlayerOnDamagedEvent extends Event {
 
     private static final HandlerList handlers = new HandlerList();
-    private Hashtable<String, Object> flags = new Hashtable<String, Object>();
+    private HashMap<String, Object> flags = new HashMap();
     private Player player;
     private LivingEntity attacker;
     private int damage;
@@ -93,6 +92,7 @@ public class PlayerOnDamagedEvent extends Event {
     /**
      * @return gets the handlers for the event
      */
+    @Override
     public HandlerList getHandlers() {
         return handlers;
     }

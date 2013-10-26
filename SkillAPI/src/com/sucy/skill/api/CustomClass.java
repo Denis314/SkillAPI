@@ -14,12 +14,12 @@ import java.util.List;
  */
 public abstract class CustomClass extends Attributed {
 
-    private final HashMap<Class<? extends Projectile>, Integer> projectileDamage = new HashMap<Class<? extends Projectile>, Integer>();
-    private final HashMap<Material, Integer> damage = new HashMap<Material, Integer>();
-    private final HashMap<String, Integer> bonusDamage = new HashMap<String, Integer>();
+    private final HashMap<Class<? extends Projectile>, Integer> projectileDamage = new HashMap();
+    private final HashMap<Material, Integer> damage = new HashMap();
+    private final HashMap<String, Integer> bonusDamage = new HashMap();
 
-    private final List<String> inheritance = new ArrayList<String>();
-    private final List<String> skills = new ArrayList<String>();
+    private final List<String> inheritance = new ArrayList();
+    private final List<String> skills = new ArrayList();
 
     private final String name;
     private final String parent;

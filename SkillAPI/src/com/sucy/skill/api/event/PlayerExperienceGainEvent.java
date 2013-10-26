@@ -56,6 +56,7 @@ public class PlayerExperienceGainEvent extends Event implements Cancellable {
     /**
      * @return whether or not the gain in experience is cancelled
      */
+    @Override
     public boolean isCancelled() {
         return cancelled;
     }
@@ -65,6 +66,7 @@ public class PlayerExperienceGainEvent extends Event implements Cancellable {
      *
      * @param cancelled true/false
      */
+    @Override
     public void setCancelled(boolean cancelled) {
         this.cancelled = cancelled;
     }
@@ -72,6 +74,7 @@ public class PlayerExperienceGainEvent extends Event implements Cancellable {
     /**
      * @return gets the handlers for the event
      */
+    @Override
     public HandlerList getHandlers() {
         return handlers;
     }

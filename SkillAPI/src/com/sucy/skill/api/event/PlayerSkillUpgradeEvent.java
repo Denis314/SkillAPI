@@ -42,6 +42,7 @@ public class PlayerSkillUpgradeEvent extends Event {
     /**
      * @return gets the handlers for the event
      */
+    @Override
     public HandlerList getHandlers() {
         return handlers;
     }

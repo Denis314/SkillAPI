@@ -5,7 +5,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 
-import java.util.Hashtable;
+import java.util.HashMap;
 
 /**
  * Event for when a player hits an enemy
@@ -13,7 +13,7 @@ import java.util.Hashtable;
 public class PlayerOnHitEvent extends Event {
 
     private static final HandlerList handlers = new HandlerList();
-    private Hashtable<String, Object> flags = new Hashtable<String, Object>();
+    private HashMap<String, Object> flags = new HashMap();
     private Player player;
     private LivingEntity target;
     private int damage;
@@ -93,6 +93,7 @@ public class PlayerOnHitEvent extends Event {
     /**
      * @return gets the handlers for the event
      */
+    @Override
     public HandlerList getHandlers() {
         return handlers;
     }

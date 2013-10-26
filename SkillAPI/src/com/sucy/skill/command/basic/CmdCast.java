@@ -11,8 +11,6 @@ import com.sucy.skill.skills.PlayerSkills;
 import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.Plugin;
 
-import java.util.List;
-
 /**
  * Command to bind a skill to an item
  */

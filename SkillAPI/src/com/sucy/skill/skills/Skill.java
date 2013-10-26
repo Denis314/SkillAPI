@@ -107,13 +107,13 @@ public final class Skill implements Comparable<Skill> {
 
         ItemStack item = new ItemStack(indicator);
         ItemMeta meta = item.hasItemMeta() ? item.getItemMeta() : Bukkit.getItemFactory().getItemMeta(indicator);
-        ArrayList<String> lore = new ArrayList<String>();
+        ArrayList<String> lore = new ArrayList();
 
         ClassSkill cs = plugin.getRegisteredSkill(getName());
 
         // Cycle through each line, parse it, and add it to the display
         for (String line : layout) {
-            List<String> results = new ArrayList<String>();
+            List<String> results = new ArrayList();
 
             // Title filter
             if (line.contains("{title}")) {
@@ -203,7 +203,7 @@ public final class Skill implements Comparable<Skill> {
             if (line.contains("{description}")) {
 
                 // No description
-                if (description.size() == 0) {
+                if (description.isEmpty()) {
                     line = line.replace("{description}", plugin.getMessage(SkillNodes.DESCRIPTION_NONE, false));
                 }
 

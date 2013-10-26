@@ -17,7 +17,7 @@ import java.util.List;
  */
 public abstract class ClassSkill extends Attributed {
 
-    private final HashMap<String, Long> timers = new HashMap<String, Long>();
+    private final HashMap<String, Long> timers = new HashMap();
     private final SkillType type;
     private final String name;
     private Material indicator;
@@ -25,7 +25,7 @@ public abstract class ClassSkill extends Attributed {
     private int skillReqLevel;
     private int maxLevel;
 
-    protected final ArrayList<String> description = new ArrayList<String>();
+    protected final ArrayList<String> description = new ArrayList();
     protected final SkillAPI api;
 
     /**

@@ -11,7 +11,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Utility class for determining what a player can attack
+ * Переписать с интеграцией на Factions!
  */
 public class Protection {
 
@@ -53,7 +53,7 @@ public class Protection {
      * @return         list of targets the player can attack
      */
     public static List<LivingEntity> canAttack(Player attacker, List<LivingEntity> targets) {
-        List<LivingEntity> list = new ArrayList<LivingEntity>();
+        List<LivingEntity> list = new ArrayList();
         for (LivingEntity entity : targets) {
             if (canAttack(attacker, entity)) {
                 list.add(entity);
@@ -70,7 +70,7 @@ public class Protection {
      * @return         list of targets the player cannot attack
      */
     public static List<LivingEntity> cannotAttack(Player attacker, List<LivingEntity> targets) {
-        List<LivingEntity> list = new ArrayList<LivingEntity>();
+        List<LivingEntity> list = new ArrayList();
         for (LivingEntity entity : targets) {
             if (!canAttack(attacker, entity)) {
                 list.add(entity);

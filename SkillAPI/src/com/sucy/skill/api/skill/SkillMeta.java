@@ -5,7 +5,7 @@ import org.bukkit.metadata.MetadataValue;
 import org.bukkit.metadata.Metadatable;
 import org.bukkit.plugin.Plugin;
 
-import java.util.Hashtable;
+import java.util.HashMap;
 
 /**
  * <p>Metadata to attach to metadatable objects in case extra effects are needed</p>
@@ -17,7 +17,7 @@ public class SkillMeta implements MetadataValue {
 
     private static final String META_NAME = "skillMeta";
 
-    private Hashtable<String, Object> attributes = new Hashtable<String, Object>();
+    private HashMap<String, Object> attributes = new HashMap();
     private Player caster;
     private Plugin plugin;
 

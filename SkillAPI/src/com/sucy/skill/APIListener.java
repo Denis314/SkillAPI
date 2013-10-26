@@ -5,8 +5,6 @@ import com.sucy.skill.api.event.PlayerOnDamagedEvent;
 import com.sucy.skill.api.event.PlayerOnHitEvent;
 import com.sucy.skill.api.skill.*;
 import com.sucy.skill.language.StatusNodes;
-import com.sucy.skill.mccore.CoreChecker;
-import com.sucy.skill.mccore.PrefixManager;
 import com.sucy.skill.skills.*;
 
 import org.bukkit.Material;
@@ -233,10 +231,6 @@ public class APIListener implements Listener {
 
             // Update the player health
             skills.updateHealth();
-
-            // Apply class prefixes
-            if (skills.getClassName() != null && CoreChecker.isCoreActive())
-                PrefixManager.setPrefix(skills, skills.getPrefix(), plugin.getClass(skills.getClassName()).getBraceColor());
 
             // Apply passive skills
             for (Map.Entry<String, Integer> entry : skills.getSkills().entrySet()) {

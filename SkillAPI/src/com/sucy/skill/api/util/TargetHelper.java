@@ -23,7 +23,7 @@ public class TargetHelper {
      */
     public static List<LivingEntity> getLivingTargets(Player player, int range) {
         List<Entity> list = player.getNearbyEntities(range, range, range);
-        List<LivingEntity> targets = new ArrayList<LivingEntity>();
+        List<LivingEntity> targets = new ArrayList();
 
         Vector facing = player.getLocation().getDirection();
         double fLengthSq = facing.lengthSquared();
@@ -57,7 +57,7 @@ public class TargetHelper {
      */
     public static LivingEntity getLivingTarget(Player player, int range) {
         List<LivingEntity> targets = getLivingTargets(player, range);
-        if (targets.size() == 0) return null;
+        if (targets.isEmpty()) return null;
         LivingEntity target = targets.get(0);
         double minDistance = target.getLocation().distanceSquared(player.getLocation());
         for (LivingEntity entity : targets) {
