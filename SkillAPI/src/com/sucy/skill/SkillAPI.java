@@ -50,6 +50,8 @@ public class SkillAPI extends JavaPlugin {
     private boolean oldHealth;
     private int startingPoints;
     private int pointsPerLevel;
+    
+    public static SkillAPI api;
 
     // ----------------------------- Plugin Methods -------------------------------------- //
 
@@ -58,6 +60,7 @@ public class SkillAPI extends JavaPlugin {
      */
     @Override
     public void onEnable() {
+        api = this;
 
         reloadConfig();
         playerConfig = new Config(this, "players");
