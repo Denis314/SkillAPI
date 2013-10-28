@@ -234,7 +234,7 @@ public class TextSizer {
         int startingSize = measureString(begin) + measureString(end);
         int fillCount = (320 - startingSize) / measureString(fill);
         for (int i = 0; i < fillCount; i++) {
-            begin += fill + "";
+            begin += fill;
         }
         return begin + end;
     }

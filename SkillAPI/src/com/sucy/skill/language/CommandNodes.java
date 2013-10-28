@@ -74,6 +74,8 @@ public class CommandNodes {
      * Bind command key
      */
     BIND = "bind",
+            
+    UNBIND = "unbind",
 
     /**
      * Cast command key
@@ -83,27 +85,17 @@ public class CommandNodes {
     /**
      * Info player command key
      */
-    INFO_PLAYER = "info-player",
-
-    /**
-     * Info console command key
-     */
-    INFO_CONSOLE = "info-console",
+    INFO = "info",
 
     /**
      * Level console command key
      */
-    LEVEL_CONSOLE = "level-console",
-
-    /**
-     * Level player command key
-     */
-    LEVEL_PLAYER = "level-player",
+    LEVEL = "level",
 
     /**
      * Options command key
      */
-    OPTIONS = "options",
+    CLASS = "class",
 
     /**
      * Profess command key
@@ -190,5 +182,7 @@ public class CommandNodes {
     /**
      * A player doesn't own the skill
      */
-    SKILL_NOT_OWNED = ERROR_BASE + "skill-not-owned";
+    SKILL_NOT_OWNED = ERROR_BASE + "skill-not-owned",
+    
+    NOT_PERMITTED = ERROR_BASE + "not-permitted";
 }

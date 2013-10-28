@@ -21,10 +21,9 @@ import java.util.*;
 
 /**
  * <p>Player class data</p>
- * <p>You should not instantiate any new player data. You may
- * use the references given to you either through events or
- * via the SkillAPI.getPlayer(String) method however to modify
- * the stats of a player.</p>
+ * <p>You should not instantiate any new player data. You may use the references
+ * given to you either through events or via the SkillAPI.getPlayer(String)
+ * method however to modify the stats of a player.</p>
  */
 public final class PlayerSkills {
 
@@ -53,6 +52,7 @@ public final class PlayerSkills {
 
     /**
      * Constructor
+     *
      * @param plugin API reference
      * @param player player name
      * @param config config section to load from
@@ -64,10 +64,12 @@ public final class PlayerSkills {
         this.level = config.getInt(PlayerValues.LEVEL);
         this.exp = config.getInt(PlayerValues.EXP);
         this.points = config.getInt(PlayerValues.POINTS);
-        if (config.contains(PlayerValues.MANA))
+        if (config.contains(PlayerValues.MANA)) {
             this.mana = config.getInt(PlayerValues.MANA);
-        if (config.contains(PlayerValues.CLASS))
+        }
+        if (config.contains(PlayerValues.CLASS)) {
             tree = config.getString(PlayerValues.CLASS);
+        }
 
         // Class skill tree
         ConfigurationSection skillConfig = config.getConfigurationSection(PlayerValues.SKILLS);
@@ -79,8 +81,9 @@ public final class PlayerSkills {
             }
             if (skillConfig != null) {
                 for (String skill : skillConfig.getKeys(false)) {
-                    if (tree.skillSlots.containsValue(plugin.getSkill(skill)))
+                    if (tree.skillSlots.containsValue(plugin.getSkill(skill))) {
                         skills.put(skill, skillConfig.getInt(skill));
+                    }
                 }
             }
 
@@ -151,8 +154,7 @@ public final class PlayerSkills {
     public String getPrefix() {
         if (tree == null) {
             return ChatColor.GRAY + "No Class";
-        }
-        else {
+        } else {
             return plugin.getClass(tree).prefix;
         }
     }
@@ -164,13 +166,19 @@ public final class PlayerSkills {
 
         PlayerManaUseEvent event = new PlayerManaUseEvent(this, amount);
         plugin.getServer().getPluginManager().callEvent(event);
-        if (event.isCancelled()) return;
+        if (event.isCancelled()) {
+            return;
+        }
 
         CustomClass c = plugin.getRegisteredClass(tree);
         int maxMana = c == null ? 0 : c.getAttribute(ClassAttribute.MANA, level);
         mana -= event.getMana();
-        if (mana < 0) mana = 0;
-        if (mana > maxMana) mana = maxMana;
+        if (mana < 0) {
+            mana = 0;
+        }
+        if (mana > maxMana) {
+            mana = maxMana;
+        }
     }
 
     /**
@@ -180,47 +188,59 @@ public final class PlayerSkills {
 
         PlayerManaGainEvent event = new PlayerManaGainEvent(this, amount);
         plugin.getServer().getPluginManager().callEvent(event);
-        if (event.isCancelled()) return;
+        if (event.isCancelled()) {
+            return;
+        }
 
         mana += event.getMana();
-        if (mana < 0) mana = 0;
-        if (mana > 100) mana = 100;
+        if (mana < 0) {
+            mana = 0;
+        }
+        if (mana > 100) {
+            mana = 100;
+        }
     }
 
     /**
      * Upgrades a skill to the next level, consuming skill points in the process
      *
      * @param skill skill to upgrade
-     * @return      true if upgraded, false otherwise
+     * @return true if upgraded, false otherwise
      */
     public boolean upgradeSkill(Skill skill) {
 
         // Skill isn't available
-        if (!hasSkill(skill.getName()))
+        if (!hasSkill(skill.getName())) {
             return false;
+        }
 
         int level = getSkillLevel(skill.getName());
         ClassSkill classSkill = skill.getClassSkill();
 
         // Skill is already maxed
-        if (level >= skill.getMaxLevel())
+        if (level >= skill.getMaxLevel()) {
             return false;
+        }
 
         // Level requirement isn't met
-        if (this.level < classSkill.getAttribute(SkillAttribute.LEVEL, level))
+        if (this.level < classSkill.getAttribute(SkillAttribute.LEVEL, level)) {
             return false;
+        }
 
         // Skill cost isn't met
-        if (points < classSkill.getAttribute(SkillAttribute.COST, level))
+        if (points < classSkill.getAttribute(SkillAttribute.COST, level)) {
             return false;
+        }
 
         // Doesn't have prerequisite
-        if (classSkill.getSkillReq() != null && getSkillLevel(classSkill.getSkillReq()) < classSkill.getSkillReqLevel())
+        if (classSkill.getSkillReq() != null && getSkillLevel(classSkill.getSkillReq()) < classSkill.getSkillReqLevel()) {
             return false;
+        }
 
         // Apply passive skill effects
-        if (classSkill instanceof PassiveSkill)
+        if (classSkill instanceof PassiveSkill) {
             ((PassiveSkill) classSkill).onUpgrade(plugin.getServer().getPlayer(getName()), level + 1);
+        }
 
         // Upgrade the skill
         this.points -= skill.getClassSkill().getAttribute(SkillAttribute.COST, level);
@@ -278,15 +298,19 @@ public final class PlayerSkills {
         // If not resetting, simply remove any skills no longer in the tree
         if (!plugin.doProfessionsReset()) {
             for (String skill : skills.keySet()) {
-                if (tree.skillSlots.containsValue(plugin.getSkill(skill)))
+                if (tree.skillSlots.containsValue(plugin.getSkill(skill))) {
                     continue;
+                }
                 skills.remove(skill);
                 ArrayList<Material> keys = new ArrayList();
-                for (Map.Entry<Material, String> entry : binds.entrySet())
-                    if (entry.getValue().equalsIgnoreCase(skill))
+                for (Map.Entry<Material, String> entry : binds.entrySet()) {
+                    if (entry.getValue().equalsIgnoreCase(skill)) {
                         keys.add(entry.getKey());
-                for (Material mat : keys)
+                    }
+                }
+                for (Material mat : keys) {
                     binds.remove(mat);
+                }
             }
         }
 
@@ -312,7 +336,9 @@ public final class PlayerSkills {
      */
     public void addMaxHealth(int amount) {
         CustomClass c = plugin.getRegisteredClass(tree);
-        if (c != null) c.addAttribute(ClassAttribute.HEALTH, amount);
+        if (c != null) {
+            c.addAttribute(ClassAttribute.HEALTH, amount);
+        }
         updateHealth();
     }
 
@@ -322,8 +348,9 @@ public final class PlayerSkills {
     public void updateHealth() {
         if (tree == null || plugin.oldHealthEnabled()) {
             applyMaxHealth(20);
+        } else {
+            applyMaxHealth(plugin.getRegisteredClass(tree).getAttribute(ClassAttribute.HEALTH, level));
         }
-        else applyMaxHealth(plugin.getRegisteredClass(tree).getAttribute(ClassAttribute.HEALTH, level));
     }
 
     /**
@@ -333,7 +360,9 @@ public final class PlayerSkills {
      */
     public void applyMaxHealth(int amount) {
         Player p = plugin.getServer().getPlayer(player);
-        if (p == null) return;
+        if (p == null) {
+            return;
+        }
 
         double prevMax = p.getMaxHealth();
         double prevHealth = p.getHealth();
@@ -350,8 +379,9 @@ public final class PlayerSkills {
         for (Map.Entry<String, Integer> entry : getSkills().entrySet()) {
             if (entry.getValue() >= 1) {
                 ClassSkill s = plugin.getRegisteredSkill(entry.getKey());
-                if (s != null && s instanceof PassiveSkill)
+                if (s != null && s instanceof PassiveSkill) {
                     ((PassiveSkill) s).stopEffects(plugin.getServer().getPlayer(player), entry.getValue());
+                }
             }
         }
     }
@@ -364,10 +394,13 @@ public final class PlayerSkills {
     }
 
     /**
-     * @return level the player is able to profess, less than 1 if unable to profess
+     * @return level the player is able to profess, less than 1 if unable to
+     * profess
      */
     public int getProfessionLevel() {
-        if (tree == null) return 1;
+        if (tree == null) {
+            return 1;
+        }
 
         SkillTree tree = plugin.getClass(this.tree);
         return tree.level;
@@ -377,7 +410,7 @@ public final class PlayerSkills {
      * Checks if the player has the skill
      *
      * @param name skill name
-     * @return     true if included in the class, false otherwise
+     * @return true if included in the class, false otherwise
      */
     public boolean hasSkill(String name) {
         return skills.containsKey(name.toLowerCase());
@@ -387,7 +420,7 @@ public final class PlayerSkills {
      * Checks if the player has invested points in the skill
      *
      * @param name skill name
-     * @return     true if upgraded
+     * @return true if upgraded
      */
     public boolean hasSkillUnlocked(String name) {
         return hasSkill(name) && getSkillLevel(name) > 0;
@@ -397,12 +430,13 @@ public final class PlayerSkills {
      * Gets the level of the skill
      *
      * @param name skill name
-     * @return     skill level
+     * @return skill level
      * @throws IllegalArgumentException
      */
     public int getSkillLevel(String name) {
-        if (!skills.containsKey(name.toLowerCase()))
+        if (!skills.containsKey(name.toLowerCase())) {
             throw new IllegalArgumentException("Player does not have skill: " + name);
+        }
         return skills.get(name.toLowerCase());
     }
 
@@ -412,12 +446,14 @@ public final class PlayerSkills {
      * @return true if successful, false if the player doesn't have skills
      */
     public boolean viewSkills() {
-        if (tree == null)
+        if (tree == null) {
             return false;
+        }
 
         Player p = plugin.getServer().getPlayer(player);
-        if (p.getOpenInventory() != null)
+        if (p.getOpenInventory() != null) {
             p.closeInventory();
+        }
         p.openInventory(plugin.getClass(tree).getInventory(this, skills));
         return true;
     }
@@ -426,21 +462,25 @@ public final class PlayerSkills {
      * Binds a skill to a material
      *
      * @param material material to bind to
-     * @param skill    name of skill to be bound
-     * @return         previously bound skill if any
+     * @param skill name of skill to be bound
+     * @return previously bound skill if any
      */
-    public String bind(Material material, String skill) {
-        return binds.put(material, skill);
+    public void bind(Material material, String skill) {
+        binds.put(material, skill);
     }
 
     /**
      * Gets the skill bound on a material
      *
      * @param material material to check
-     * @return         bound skill or null if none
+     * @return bound skill or null if none
      */
     public String getBound(Material material) {
-        return binds.get(material);
+        if (binds.containsKey(material)) {
+            return binds.get(material);
+        } else {
+            return null;
+        }
     }
 
     /**
@@ -449,8 +489,9 @@ public final class PlayerSkills {
      * @param material material to unbind
      */
     public void unbind(Material material) {
-        if (binds.containsKey(material))
+        if (binds.containsKey(material)) {
             binds.remove(material);
+        }
     }
 
     /**
@@ -459,12 +500,16 @@ public final class PlayerSkills {
      * @param amount amount of exp to gain
      */
     public void giveExp(int amount) {
-        if (tree == null) return;
+        if (tree == null) {
+            return;
+        }
 
         // Call an event
         PlayerExperienceGainEvent event = new PlayerExperienceGainEvent(this, amount);
         plugin.getServer().getPluginManager().callEvent(event);
-        if (event.isCancelled()) return;
+        if (event.isCancelled()) {
+            return;
+        }
 
         // Add the experience
         exp += event.getExp();
@@ -477,7 +522,9 @@ public final class PlayerSkills {
         }
 
         // Level the player up
-        if (levels > 0) levelUp(levels);
+        if (levels > 0) {
+            levelUp(levels);
+        }
     }
 
     /**
@@ -486,11 +533,17 @@ public final class PlayerSkills {
      * @param amount amount of levels to go up
      */
     public void levelUp(int amount) {
-        if (tree == null) throw new IllegalArgumentException("Player cannot level up while not having a class");
+        if (tree == null) {
+            throw new IllegalArgumentException("Player cannot level up while not having a class");
+        }
 
         SkillTree skillTree = plugin.getClass(tree);
-        if (amount + level > skillTree.getMaxLevel()) amount = skillTree.getMaxLevel() - level;
-        if (amount <= 0) return;
+        if (amount + level > skillTree.getMaxLevel()) {
+            amount = skillTree.getMaxLevel() - level;
+        }
+        if (amount <= 0) {
+            return;
+        }
 
         // Add to stats
         level += amount;
@@ -513,7 +566,7 @@ public final class PlayerSkills {
             messages = plugin.getMessages(OtherNodes.MAX_LEVEL, true);
             for (String message : messages) {
                 message = message.replace("{level}", level + "")
-                                 .replace("{class}", skillTree.getName());
+                        .replace("{class}", skillTree.getName());
 
                 p.sendMessage(message);
             }
@@ -528,13 +581,17 @@ public final class PlayerSkills {
      * Checks if the player can profess to the class
      *
      * @param target class to profess to
-     * @return       true if able, false otherwise
+     * @return true if able, false otherwise
      */
     public boolean canProfess(String target) {
         SkillTree skillTree = plugin.getClass(target);
-        if (tree == null) return skillTree.parent == null;
-        else if (getProfessionLevel() < 1) return false;
-        else if (!plugin.hasPermission(plugin.getServer().getPlayer(player), skillTree)) return false;
+        if (tree == null) {
+            return skillTree.parent == null;
+        } else if (getProfessionLevel() < 1) {
+            return false;
+        } else if (!plugin.hasPermission(plugin.getServer().getPlayer(player), skillTree)) {
+            return false;
+        }
         return skillTree.parent != null && skillTree.parent.equalsIgnoreCase(tree) && plugin.getClass(tree).level <= level;
     }
 
@@ -544,8 +601,12 @@ public final class PlayerSkills {
      * @param amount amount to heal
      */
     public void heal(int amount) {
-        if (hasStatus(Status.CURSE)) amount *= -1;
-        if (hasStatus(Status.INVINCIBLE) && amount < 0) return;
+        if (hasStatus(Status.CURSE)) {
+            amount *= -1;
+        }
+        if (hasStatus(Status.INVINCIBLE) && amount < 0) {
+            return;
+        }
 
         Player p = plugin.getServer().getPlayer(player);
         double health;
@@ -554,11 +615,16 @@ public final class PlayerSkills {
         if (plugin.oldHealthEnabled() && tree != null) {
             CustomClass playerClass = plugin.getRegisteredClass(tree);
             health = p.getHealth() + amount * 20 / playerClass.getAttribute(ClassAttribute.HEALTH, level);
+        } else {
+            health = p.getHealth() + amount;
         }
-        else health = p.getHealth() + amount;
 
-            if (health > p.getMaxHealth()) health = p.getMaxHealth();
-        if (health < 0) health = 0;
+        if (health > p.getMaxHealth()) {
+            health = p.getMaxHealth();
+        }
+        if (health < 0) {
+            health = 0;
+        }
         p.setHealth(health);
     }
 
@@ -573,7 +639,7 @@ public final class PlayerSkills {
      * Calculates the required experience for a level
      *
      * @param level level to calculate for
-     * @return      amount of experience needed
+     * @return amount of experience needed
      */
     public static int getRequiredExp(int level) {
         return (level + 4) * (level + 4) / 10 * 10;
@@ -598,20 +664,23 @@ public final class PlayerSkills {
     /**
      * Applies a status to the player
      *
-     * @param status   status to apply
+     * @param status status to apply
      * @param duration duration of the status in seconds
      */
     public void applyStatus(Status status, int duration) {
 
         PlayerStatusEvent event = new PlayerStatusEvent(this, status, duration);
         plugin.getServer().getPluginManager().callEvent(event);
-        if (event.isCancelled()) return;
+        if (event.isCancelled()) {
+            return;
+        }
 
-        long time = System.currentTimeMillis() + (int)(event.getDuration() * 1000);
-        if (statuses.containsKey(status) && statuses.get(status) >= time) return;
+        long time = System.currentTimeMillis() + (int) (event.getDuration() * 1000);
+        if (statuses.containsKey(status) && statuses.get(status) >= time) {
+            return;
+        }
         statuses.put(status, time);
     }
-
 
     /**
      * Removes a status from the player
@@ -626,7 +695,7 @@ public final class PlayerSkills {
      * Checks if the player is afflicted with a status
      *
      * @param status status to check for
-     * @return       true if afflicted, false otherwise
+     * @return true if afflicted, false otherwise
      */
     public boolean hasStatus(Status status) {
         return getTimeLeft(status) > 0;
@@ -636,7 +705,7 @@ public final class PlayerSkills {
      * Gets the time left on a status applied to the player
      *
      * @param status status to check
-     * @return       time remaining on the status
+     * @return time remaining on the status
      */
     public int getTimeLeft(Status status) {
         return statuses.containsKey(status) ? Math.max(0, (int) (statuses.get(status) - System.currentTimeMillis() + 999) / 1000) : 0;
@@ -646,7 +715,7 @@ public final class PlayerSkills {
      * Gets a value from the player
      *
      * @param key value key
-     * @return    value
+     * @return value
      */
     public int getValue(String key) {
         return values.get(key);
@@ -655,7 +724,7 @@ public final class PlayerSkills {
     /**
      * Sets a value for the player
      *
-     * @param key   value key
+     * @param key value key
      * @param value value
      */
     public void setValue(String key, int value) {
@@ -665,7 +734,7 @@ public final class PlayerSkills {
     /**
      * Adds to a value for the player
      *
-     * @param key   value key
+     * @param key value key
      * @param value amount to add
      */
     public void addValue(String key, int value) {
@@ -675,7 +744,7 @@ public final class PlayerSkills {
     /**
      * Subtracts from a value for the player
      *
-     * @param key   value key
+     * @param key value key
      * @param value amount to subtract
      */
     public void subtractValue(String key, int value) {
@@ -685,9 +754,9 @@ public final class PlayerSkills {
     /**
      * Checks if the player's value has at least the deignated amount
      *
-     * @param key   value key
+     * @param key value key
      * @param value amount required
-     * @return      true if has at least that much, false otherwise
+     * @return true if has at least that much, false otherwise
      */
     public boolean hasValue(String key, int value) {
         return values.get(key) >= value;
@@ -702,7 +771,9 @@ public final class PlayerSkills {
         ClassSkill skill = plugin.getRegisteredSkill(skillName);
 
         // Invalid skill
-        if (skill == null) throw new IllegalArgumentException("Invalid skill: " + skillName);
+        if (skill == null) {
+            throw new IllegalArgumentException("Invalid skill: " + skillName);
+        }
 
         SkillStatus status = skill.checkStatus(this, plugin.isManaEnabled());
         int level = getSkillLevel(skill.getName());
@@ -714,15 +785,12 @@ public final class PlayerSkills {
             if (hasStatus(Status.STUN)) {
                 node = StatusNodes.STUNNED;
                 left = getTimeLeft(Status.STUN);
-            }
-            else {
+            } else {
                 node = StatusNodes.SILENCED;
                 left = getTimeLeft(Status.SILENCE);
             }
             plugin.sendStatusMessage(plugin.getServer().getPlayer(player), node, left);
-        }
-
-        // Skill is on cooldown
+        } // Skill is on cooldown
         else if (status == SkillStatus.ON_COOLDOWN) {
             List<String> messages = plugin.getMessages(OtherNodes.ON_COOLDOWN, true);
             for (String message : messages) {
@@ -731,9 +799,7 @@ public final class PlayerSkills {
 
                 plugin.getServer().getPlayer(player).sendMessage(message);
             }
-        }
-
-        // Skill requires more mana
+        } // Skill requires more mana
         else if (status == SkillStatus.MISSING_MANA) {
             List<String> messages = plugin.getMessages(OtherNodes.NO_MANA, true);
             int cost = skill.getAttribute(SkillAttribute.MANA, level);
@@ -745,9 +811,7 @@ public final class PlayerSkills {
 
                 plugin.getServer().getPlayer(player).sendMessage(message);
             }
-        }
-
-        // Check for skill shots
+        } // Check for skill shots
         else if (skill instanceof SkillShot) {
 
             // Try to cast the skill
@@ -757,11 +821,11 @@ public final class PlayerSkills {
                 skill.startCooldown(this);
 
                 // Use mana if successful
-                if (plugin.isManaEnabled()) useMana(plugin.getSkill(skill.getName()).getClassSkill().getAttribute(SkillAttribute.MANA, level));
+                if (plugin.isManaEnabled()) {
+                    useMana(plugin.getSkill(skill.getName()).getClassSkill().getAttribute(SkillAttribute.MANA, level));
+                }
             }
-        }
-
-        // Check for Target Skills
+        } // Check for Target Skills
         else if (skill instanceof TargetSkill) {
 
             // Must have a target
@@ -776,7 +840,9 @@ public final class PlayerSkills {
                     skill.startCooldown(this);
 
                     // Use mana if successful
-                    if (plugin.isManaEnabled()) useMana(plugin.getSkill(skill.getName()).getClassSkill().getAttribute(SkillAttribute.MANA, level));
+                    if (plugin.isManaEnabled()) {
+                        useMana(plugin.getSkill(skill.getName()).getClassSkill().getAttribute(SkillAttribute.MANA, level));
+                    }
                 }
             }
         }
@@ -786,7 +852,7 @@ public final class PlayerSkills {
      * Saves the player to the config file
      *
      * @param config config file
-     * @param path   config path
+     * @param path config path
      */
     public void save(ConfigurationSection config, String path) {
         config.set(path + PlayerValues.CLASS, tree);

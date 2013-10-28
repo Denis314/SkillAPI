@@ -1,9 +1,26 @@
-name: SkillAPI
+name: SkillAPI reloaded
 main: com.sucy.skill.SkillAPI
-version: 1.4
+version: 1.1 beta
 commands:
+  bind:
+    usage: /bind <skill>
+    description: 'Binds skill to held item'
+  unbind:
+    usage: /unbind
+    description: 'Unbinds skill from held item'
+  cast:
+    usage: /cast <skill>
+    description: 'Casts the skill'
+  skills:
+    usage: /skills
+    description: 'Opens your skill tree'
+  info:
+    usage: /info [player]
+    description: 'Views details of player'
   class:
-    description: interacts with class and skill functionality
+    usage: /class [prof|reset]
+    description: 'View profession options'
+
 permissions:
   skillapi.basic:
     description: access to skill trees and using skills
@@ -17,7 +34,6 @@ permissions:
   skillapi.class:
     description: access to using all classes
     default: true
-
   skillapi.*:
     description: access to all commands
     default: op

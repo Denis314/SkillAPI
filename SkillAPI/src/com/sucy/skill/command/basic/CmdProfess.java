@@ -21,14 +21,14 @@ public class CmdProfess implements ICommand {
      * Executes the command
      *
      * @param handler handler for the command
-     * @param plugin  plugin reference
-     * @param sender  sender of the command
-     * @param args    arguments
+     * @param plugin plugin reference
+     * @param sender sender of the command
+     * @param args arguments
      */
     @Override
     public void execute(CommandHandler handler, Plugin plugin, CommandSender sender, String[] args) {
 
-        SkillAPI api = (SkillAPI)plugin;
+        SkillAPI api = (SkillAPI) plugin;
         PlayerSkills player = api.getPlayer(sender.getName());
 
         // Requires at least 1 argument
@@ -39,9 +39,7 @@ public class CmdProfess implements ICommand {
                 String error = api.getMessage(CommandNodes.NOT_A_CLASS, true);
                 error = error.replace("{class}", args[0]);
                 sender.sendMessage(error);
-            }
-
-            // Profess
+            } // Profess
             else if (player.canProfess(args[0])) {
                 player.setClass(args[0]);
                 List<String> messages = api.getMessages(CommandNodes.COMPLETE + CommandNodes.PROFESS, true);
@@ -49,17 +47,15 @@ public class CmdProfess implements ICommand {
                     message = message.replace("{class}", args[0]);
                     sender.sendMessage(message);
                 }
-            }
-
-            // Unable to profess just yet
+            } // Unable to profess just yet
             else {
                 String error = api.getMessage(CommandNodes.CANNOT_PROFESS, true);
                 sender.sendMessage(error);
             }
+        } // Invalid arguments
+        else {
+            handler.displayUsage(sender, this);
         }
-
-        // Invalid arguments
-        else handler.displayUsage(sender);
     }
 
     /**
@@ -75,7 +71,7 @@ public class CmdProfess implements ICommand {
      */
     @Override
     public String getArgsString(Plugin plugin) {
-        return ((SkillAPI)plugin).getMessage(CommandNodes.ARGUMENTS + CommandNodes.PROFESS, true);
+        return ((SkillAPI) plugin).getMessage(CommandNodes.ARGUMENTS + CommandNodes.PROFESS, true);
     }
 
     /**
@@ -83,7 +79,7 @@ public class CmdProfess implements ICommand {
      */
     @Override
     public String getDescription(Plugin plugin) {
-        return ((SkillAPI)plugin).getMessage(CommandNodes.DESCRIPTION + CommandNodes.PROFESS, true);
+        return ((SkillAPI) plugin).getMessage(CommandNodes.DESCRIPTION + CommandNodes.PROFESS, true);
     }
 
     /**

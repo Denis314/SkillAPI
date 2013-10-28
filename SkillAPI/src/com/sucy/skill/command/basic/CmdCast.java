@@ -20,14 +20,14 @@ public class CmdCast implements ICommand {
      * Executes the command
      *
      * @param handler handler for the command
-     * @param plugin  plugin reference
-     * @param sender  sender of the command
-     * @param args    arguments
+     * @param plugin plugin reference
+     * @param sender sender of the command
+     * @param args arguments
      */
     @Override
     public void execute(CommandHandler handler, Plugin plugin, CommandSender sender, String[] args) {
 
-        SkillAPI api = (SkillAPI)plugin;
+        SkillAPI api = (SkillAPI) plugin;
         PlayerSkills player = api.getPlayer(sender.getName());
 
         // Requires at least one argument
@@ -35,28 +35,28 @@ public class CmdCast implements ICommand {
 
             // Get the skill name
             String skill = args[0];
-            for (int i = 1; i < args.length; i++) skill += " " + args[i];
+            for (int i = 1; i < args.length; i++) {
+                skill += " " + args[i];
+            }
 
             // Invalid skill
             if (!api.isSkillRegistered(skill)) {
                 String error = api.getMessage(CommandNodes.NOT_A_SKILL, true);
                 error = error.replace("{skill}", skill);
                 sender.sendMessage(error);
-            }
-
-            // Player doesn't have the skill
+            } // Player doesn't have the skill
             else if (!player.hasSkill(skill) || player.getSkillLevel(skill) == 0) {
                 String error = api.getMessage(CommandNodes.SKILL_NOT_OWNED, true);
                 error = error.replace("{skill}", skill);
                 sender.sendMessage(error);
+            } // Cast the skill
+            else {
+                player.castSkill(skill);
             }
-
-            // Cast the skill
-            else player.castSkill(skill);
+        } // Invalid arguments
+        else {
+            handler.displayUsage(sender, this);
         }
-
-        // Invalid arguments
-        else handler.displayUsage(sender);
     }
 
     /**
@@ -72,7 +72,7 @@ public class CmdCast implements ICommand {
      */
     @Override
     public String getArgsString(Plugin plugin) {
-        return ((SkillAPI)plugin).getMessage(CommandNodes.ARGUMENTS + CommandNodes.CAST, true);
+        return ((SkillAPI) plugin).getMessage(CommandNodes.ARGUMENTS + CommandNodes.CAST, true);
     }
 
     /**
@@ -80,7 +80,7 @@ public class CmdCast implements ICommand {
      */
     @Override
     public String getDescription(Plugin plugin) {
-        return ((SkillAPI)plugin).getMessage(CommandNodes.DESCRIPTION + CommandNodes.CAST, true);
+        return ((SkillAPI) plugin).getMessage(CommandNodes.DESCRIPTION + CommandNodes.CAST, true);
     }
 
     /**

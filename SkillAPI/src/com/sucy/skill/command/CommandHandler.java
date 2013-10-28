@@ -1,6 +1,8 @@
 package com.sucy.skill.command;
 
+import com.sucy.skill.SkillAPI;
 import com.sucy.skill.api.util.TextSizer;
+import com.sucy.skill.language.CommandNodes;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -11,9 +13,10 @@ import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.List;
+import java.util.Map.Entry;
+import java.util.Set;
+import java.util.TreeMap;
 
 /**
  * <p>Command organizer and executor imported from MCCore</p>
@@ -21,53 +24,32 @@ import java.util.Map;
 public abstract class CommandHandler implements CommandExecutor {
 
     protected static final String BREAK = ChatColor.STRIKETHROUGH + "" + ChatColor.DARK_GRAY + TextSizer.createLine("", "", "-");
-
     /**
-     * Table of registered sub-commands
+     * List of registered commands
      */
-    protected final Map<String, ICommand> commands = new HashMap();
-
+    public final List<CustomCommand> commands = new ArrayList();
     /**
      * Plugin reference
      */
-    protected final Plugin plugin;
-
-    /**
-     * Usage title
-     */
-    protected String title;
-
-    /**
-     * Command label
-     */
-    protected final String label;
+    protected final SkillAPI plugin;
 
     /**
      * Constructor
      *
-     * @param plugin  plugin reference
-     * @param title   usage title
+     * @param plugin plugin reference
+     * @param title usage title
      * @param command command label
      */
-    public CommandHandler(Plugin plugin, String title, String command) {
+    public CommandHandler(SkillAPI plugin) {
         this.plugin = plugin;
-        this.title = title;
-        this.label = command;
         registerCommands();
-        PluginCommand cmd = ((JavaPlugin)plugin).getCommand(command);
-        if (cmd != null) {
-            cmd.setExecutor(this);
+        String[] cmds = {"bind", "unbind", "use", "skills", "info", "class"};
+        for (String s : cmds) {
+            PluginCommand cmd = ((JavaPlugin) plugin).getCommand(s);
+            if (cmd != null) {
+                cmd.setExecutor(this);
+            }
         }
-    }
-
-    /**
-     * Constructor
-     *
-     * @param plugin  plugin reference
-     * @param command command label and usage title
-     */
-    public CommandHandler(Plugin plugin, String command) {
-        this(plugin, command, command);
     }
 
     /**
@@ -78,59 +60,48 @@ public abstract class CommandHandler implements CommandExecutor {
     }
 
     /**
-     * @return command label
-     */
-    public String getLabel() {
-        return label.toLowerCase();
-    }
-
-    /**
      * Registers a new sub-command
      *
-     * @param command  command prefix
+     * @param command command prefix
      * @param executor handler for the command
      */
-    protected void registerCommand(String command, ICommand executor) {
-        commands.put(command, executor);
+    protected void registerCommand(CustomCommand cmd) {
+        commands.add(cmd);
     }
 
     /**
      * Called on a command
      *
      * @param sender sender of the command
-     * @param cmd    command executed
-     * @param label  command label
-     * @param args   command arguments
-     * @return       true
+     * @param cmd command executed
+     * @param label command label
+     * @param args command arguments
+     * @return true
      */
     @Override
     public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
-
-        // No arguments simply shows the command usage
-        if (args.length == 0) displayUsage(sender);
-
-            // If a sub-command is found, execute it
-        else if (commands.containsKey(args[0].toLowerCase())) {
-            ICommand command = commands.get(args[0].toLowerCase());
-            if (sender.hasPermission(command.getPermissionNode()))
-                command.execute(this, plugin, sender, trimArgs(args));
-            else
-                sender.sendMessage(ChatColor.DARK_RED + "You do not have permission to do that");
-        }
-        else {
-
-            // Try to get a page number from the args
-            try {
-                int page = Integer.parseInt(args[0]);
-                displayUsage(sender, page);
+        if (args.length == 0) {
+            for (CustomCommand c : commands) {
+                if (cmd.getName().equalsIgnoreCase(c.getName()) && !c.hasLabel()) {
+                    if (sender.hasPermission(c.getExecutor().getPermissionNode())) {
+                        c.getExecutor().execute(this, plugin, sender, args);
+                    } else {
+                        sender.sendMessage(plugin.getMessage(CommandNodes.NOT_PERMITTED, true));
+                    }
+                }
             }
-
-            // If it wasn't a number, just display the first page
-            catch (Exception e) {
-                displayUsage(sender);
+        } else {
+            for (CustomCommand c : commands) {
+                if (cmd.getName().equalsIgnoreCase(c.getName()) && c.hasLabel() && args[0].equalsIgnoreCase(c.getLabel())) {
+                    if (sender.hasPermission(c.getExecutor().getPermissionNode())) {
+                        args = trimArgs(args);
+                        c.getExecutor().execute(this, plugin, sender, args);
+                    } else {
+                        sender.sendMessage(plugin.getMessage(CommandNodes.NOT_PERMITTED, true));
+                    }
+                }
             }
         }
-
         // Use custom command usage
         return true;
     }
@@ -139,111 +110,138 @@ public abstract class CommandHandler implements CommandExecutor {
      * Trims the first element off of args
      *
      * @param args initial args
-     * @return     trimmed args
+     * @return trimmed args
      */
-    protected String[] trimArgs(String[] args) {
+    public String[] trimArgs(String[] args) {
 
         // Can't trim a zero-length array
-        if (args.length == 0) return args;
+        if (args.length == 0) {
+            return args;
+        }
 
         // Make a new array that is one smaller in size
         String[] trimmed = new String[args.length - 1];
 
         // Copy the array over if there are elements left
-        if (trimmed.length > 0)
+        if (trimmed.length > 0) {
             System.arraycopy(args, 1, trimmed, 0, trimmed.length);
+        }
 
         // Return the new array
         return trimmed;
     }
 
     /**
-     * Displays the command usage
-     * - If you want custom displays, override the method with the page argument -
+     * Displays the command usage - If you want custom displays, override the
+     * method with the page argument -
      *
      * @param sender sender of the command
      */
-    public void displayUsage(CommandSender sender) {
+    protected void displayUsage(CommandSender sender) {
         displayUsage(sender, 1);
     }
 
     /**
-     * Displays the command usage
-     * Can be overridden for custom displays
+     * Displays the command usage Can be overridden for custom displays
      *
      * @param sender sender of the command
-     * @param page   page number
+     * @param page page number
      */
-    public void displayUsage (CommandSender sender, int page) {
-        if (page < 1) page = 1;
+    protected void displayUsage(CommandSender sender, int page) {
+        if (page < 1) {
+            page = 1;
+        }
 
         // Get the key set alphabetized
-        ArrayList<String> keys = new ArrayList(commands.keySet());
-        Collections.sort(keys);
+        List<CustomCommand> keys = new ArrayList();
+        for (CustomCommand c : commands) {
+            if (canUseCommand(sender, c.getExecutor())) {
+                keys.add(c);
+            }
+        }
 
-        // Limit the page number
-        int validKeys = 0;
-        for (String key : keys)
-            if (canUseCommand(sender, commands.get(key)))
-                validKeys++;
-
-        if (validKeys == 0) {
+        if (keys.isEmpty()) {
             sender.sendMessage(ChatColor.GRAY + "   No commands available");
             return;
         }
 
-        int maxPage = (validKeys + 6) / 7;
-        if (page > maxPage)
+        int maxPage = (keys.size() + 6) / 7;
+        if (page > maxPage) {
             page = maxPage;
+        }
 
-        sender.sendMessage(BREAK);
-        sender.sendMessage(ChatColor.DARK_GREEN + title + " - Command Usage" + (maxPage > 1 ? " (Page " + page + "/" + maxPage + ")" : ""));
-
-        // Get the maximum length
+        // Get command syntax and his maximum length
+        TreeMap<String, CustomCommand> newKeys = new TreeMap();
         int maxSize = 0;
         int index = 0;
-        for (String key : keys) {
-            if (!canUseCommand(sender, commands.get(key)))
-                continue;
+        for (CustomCommand c : keys) {
+            String s = ChatColor.GOLD + "/" + c.getName() + ' ';
+            if (c.hasLabel()) {
+                s = s + c.getLabel() + ' ';
+            }
+            s = s + ChatColor.LIGHT_PURPLE + c.getExecutor().getArgsString(plugin);
             index++;
-            if (index <= (page - 1) * 7 || index > page * 7) continue;
-            int size = TextSizer.measureString(key + " " + commands.get(key).getArgsString(plugin));
-            if (size > maxSize) maxSize = size;
+            if (index <= (page - 1) * 7 || index > page * 7) {
+                continue;
+            }
+            int size = TextSizer.measureString(s);
+            if (size > maxSize) {
+                maxSize = size;
+            }
+            newKeys.put(s, c);
         }
+        Set<Entry<String, CustomCommand>> commSet = newKeys.entrySet();
         maxSize += 4;
+
+        sender.sendMessage(BREAK);
+        sender.sendMessage(ChatColor.DARK_GREEN + "SkillAPI help" + (maxPage > 1 ? " (Page " + page + "/" + maxPage + ")" : ""));
 
         // Display usage, squaring everything up nicely
         index = 0;
-        for (String key : keys) {
-            if (!canUseCommand(sender, commands.get(key)))
-                continue;
+        for (Entry<String, CustomCommand> key : commSet) {
             index++;
-            if (index <= (page - 1) * 7 || index > page * 7) continue;
-            sender.sendMessage(ChatColor.GOLD + "/" + label.toLowerCase() + " " + TextSizer.expand(key + " "
-                    + ChatColor.LIGHT_PURPLE + commands.get(key).getArgsString(plugin) + ChatColor.GRAY, maxSize, false)
-                    + ChatColor.GRAY + "- " + commands.get(key).getDescription(plugin));
+            if (index <= (page - 1) * 7 || index > page * 7) {
+                continue;
+            }
+            sender.sendMessage(TextSizer.expand(key.getKey() + ChatColor.GRAY, maxSize, false)
+                    + ChatColor.GRAY + " - " + key.getValue().getExecutor().getDescription(plugin));
         }
 
         sender.sendMessage(BREAK);
     }
 
-    /**
-     * Checks whether or not a command sender can use a certain command
-     * - Can be overridden for custom checks -
-     *
-     * @param sender  sender of the command
-     * @param command command to check
-     * @return        true if able to use it, false otherwise
-     */
-    protected boolean canUseCommand(CommandSender sender, ICommand command) {
-        boolean correctType = true;
-        if (command.getSenderType() == SenderType.PLAYER_ONLY && !(sender instanceof Player)) correctType = false;
-        if (command.getSenderType() == SenderType.CONSOLE_ONLY && sender instanceof Player) correctType = false;
-        return sender.hasPermission(command.getPermissionNode()) && correctType;
+    public void displayUsage(CommandSender sender, ICommand comm) {
+        for (CustomCommand c : commands) {
+            if (c.getExecutor() == comm) {
+                String s = ChatColor.GOLD + "/" + c.getName() + ' ';
+                if (c.hasLabel()) {
+                    s = s + c.getLabel() + ' ';
+                }
+                s = s + ChatColor.LIGHT_PURPLE + c.getExecutor().getArgsString(plugin) + ChatColor.GRAY + " - "
+                        + c.getExecutor().getDescription(plugin);
+                sender.sendMessage(s);
+            }
+        }
     }
 
     /**
-     * Registers all sub-commands
+     * Checks whether or not a command sender can use a certain command - Can be
+     * overridden for custom checks -
+     *
+     * @param sender sender of the command
+     * @param command command to check
+     * @return true if able to use it, false otherwise
      */
+    protected boolean canUseCommand(CommandSender sender, ICommand command) {
+        boolean correctType = true;
+        if (command.getSenderType() == SenderType.PLAYER_ONLY && !(sender instanceof Player)) {
+            correctType = false;
+        }
+        if (command.getSenderType() == SenderType.CONSOLE_ONLY && sender instanceof Player) {
+            correctType = false;
+        }
+        return sender.hasPermission(command.getPermissionNode()) && correctType;
+    }
+
     protected abstract void registerCommands();
 }

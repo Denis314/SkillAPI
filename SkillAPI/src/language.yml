@@ -34,12 +34,11 @@ Skill Tree:
 Commands:
   arguments:
     bind: '<skill>'
+    unbind: ''
     cast: '<skill>'
-    info-console: '<player>'
-    info-player: '&a[player]'
-    level-console: '<amount> <player>'
-    level-player: '<amount> &a[player]'
-    options: ''
+    info: '&a[player]'
+    level: '<amount> &a[player]'
+    class: ''
     profess: '<class>'
     reload: ''
     reset: ''
@@ -48,13 +47,15 @@ Commands:
     bind:
     - '&6{skill} &2has been bound to the item &6{item}'
     cast: []
-    info-console:
+    unbind:
+    - '&6{skill} &2has been removed from the item &6{item}'
+    info:
       has-class:
       - '&8{break}'
       - '&2   Player - &6{player}'
       - '&7    Class - &6{class}'
       - '&7    Level - &6{level}'
-      - '&7      Exp - &6{exp}'
+      - '&7      Exp - &6{exp} &7/ &6{req-exp}'
       - '&7   Points - &6{points}'
       - '&8{break}'
       no-class:
@@ -62,25 +63,9 @@ Commands:
       - '&2   Player - &6{player}'
       - '&7    Class - None'
       - '&8{break}'
-    info-player:
-      has-class:
-      - '&8{break}'
-      - '{expandFront(39,&2Player)} &7- &6{player}'
-      - '{expandFront(39,&7Class)} - &6{class}'
-      - '{expandFront(39,&7Level)} - &6{level}'
-      - '{expandFront(39,&7Exp)} - &6{exp} &7/ &6{req-exp}'
-      - '{expandFront(39,&7Points)} - &6{points}'
-      - '&8{break}'
-      no-class:
-      - '&8{break}'
-      - '{expandFront(39,&2Player)} &7- &6{player}'
-      - '{expandFront(39,&7Class)} - None'
-      - '&8{break}'
-    level-console:
+    level:
     - '&6{player} &2gained &6{amount} &2levels'
-    level-player:
-    - '&6{player} &2gained &6{amount} &2levels'
-    options:
+    class:
       has-options:
       - '&8{break}'
       - '&2Class Options &7- Available at level {level}'
@@ -103,17 +88,17 @@ Commands:
     skills: []
   description:
     bind: 'Binds skill to held item'
+    unbind: 'Unbinds skill from held item'
     cast: 'Casts the skill'
-    info-player: 'Views details of player'
-    info-console: 'Views details of player'
-    level-console: 'Levels a player up'
-    level-player: 'Levels a player up'
-    options: 'View profession options'
+    info: 'Views details of player'
+    level: 'Levels a player up'
+    class: 'View profession options'
     profess: 'Professes as the class'
     reload: 'Reloads the plugin'
     reset: 'Resets all stats'
-    skills: 'Opens skill tree'
+    skills: 'Opens your skill tree'
   error:
+    not-permitted: '&4You have not permition to do this!'
     cannot-be-cast: '&4That skill cannot be cast'
     cannot-level: '&4That player needs a class before leveling up'
     cannot-profess: '&4You cannot profess at this time'
@@ -128,12 +113,11 @@ Commands:
     skill-not-owned: '&4You do not have that skill'
   name:
     bind: 'bind'
+    unbind: 'unbind'
     cast: 'cast'
-    info-player: 'info'
-    info-console: 'info'
-    level-console: 'level'
-    level-player: 'level'
-    options: 'options'
+    info: 'info'
+    level: 'level'
+    class: 'class'
     profess: 'profess'
     reload: 'reload'
     reset: 'reset'

@@ -25,7 +25,6 @@ public class CmdReload implements ICommand {
      */
     @Override
     public void execute(CommandHandler handler, Plugin plugin, CommandSender sender, String[] args) {
-
         plugin.getServer().getPluginManager().disablePlugin(plugin);
         plugin.getServer().getPluginManager().enablePlugin(plugin);
         sender.sendMessage(((SkillAPI) plugin).getMessage(CommandNodes.COMPLETE + CommandNodes.RELOAD, true));
